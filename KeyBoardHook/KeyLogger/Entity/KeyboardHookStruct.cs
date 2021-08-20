@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace KeyBoardHook.KeyLogger.Entity
 {
@@ -8,12 +9,13 @@ namespace KeyBoardHook.KeyLogger.Entity
     /// <remarks>
     ///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/windowing/hooks/hookreference/hookstructures/cwpstruct.asp
     /// </remarks>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     internal struct KeyboardHookStruct
     {
         /// <summary>
         ///     Specifies a virtual-key code. The code must be a value in the range 1 to 254.
         /// </summary>
+        ///
         public int VirtualKeyCode;
 
         /// <summary>
@@ -35,5 +37,11 @@ namespace KeyBoardHook.KeyLogger.Entity
         ///     Specifies extra information associated with the message.
         /// </summary>
         public int ExtraInfo;
+        
+        // public Int32 vkCode;
+        // public Int32 scanCode;
+        // public Int32 flags;
+        // public Int32 time;
+        // public IntPtr iExtraInfo;
     }
 }

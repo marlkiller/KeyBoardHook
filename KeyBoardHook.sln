@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyBoardHook", "KeyBoardHook\KeyBoardHook.csproj", "{C46B42AE-A47B-4BB2-9F81-0D5A5FA21839}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLib", "MyLib\MyLib.csproj", "{730A23B9-E380-4E93-B27E-D89D2D2A7B49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{C46B42AE-A47B-4BB2-9F81-0D5A5FA21839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C46B42AE-A47B-4BB2-9F81-0D5A5FA21839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C46B42AE-A47B-4BB2-9F81-0D5A5FA21839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{730A23B9-E380-4E93-B27E-D89D2D2A7B49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{730A23B9-E380-4E93-B27E-D89D2D2A7B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{730A23B9-E380-4E93-B27E-D89D2D2A7B49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{730A23B9-E380-4E93-B27E-D89D2D2A7B49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

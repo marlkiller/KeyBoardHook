@@ -33,6 +33,9 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="ClassLibrary1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\ClassLibrary1\ClassLibrary1\bin\Debug\ClassLibrary1.dll</HintPath>
+        </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Xml.Linq" />
@@ -66,10 +69,12 @@
         <Compile Include="KeyLogger\Hooker\ActiveWindowHook.cs" />
         <Compile Include="KeyLogger\Hooker\KeyboardHook.cs" />
         <Compile Include="KeyLogger\Hooker\KeyProcessing.cs" />
-        <Compile Include="KeyLogger\Native\NativeMethodsUser32.cs" />
         <Compile Include="KeyLogger\Service\KeyLog.cs" />
         <Compile Include="KeyLogger\Service\KeyLoggerService.cs" />
+        <Compile Include="KeyLogger\Service\MouseHookService.cs" />
         <Compile Include="KeyLogger\StringDownEventArgs.cs" />
+        <Compile Include="Common\Native\NativeMethodsUser32.cs" />
+
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <EmbeddedResource Include="Form1.resx">

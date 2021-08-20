@@ -10,7 +10,10 @@ namespace KeyBoardHook.KeyLogger
             Value = value;
             VCode = vCode;
         }
-
+        public StringDownEventArgs()
+        {
+           
+        }
         public bool IsChar { get; }
         public string Value { get; }
         public uint VCode { get; }

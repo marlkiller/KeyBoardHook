@@ -1,0 +1,6 @@
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\bin\Release\MyLib.dll
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\bin\Release\MyLib.pdb
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.csprojAssemblyReference.cache
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.csproj.CoreCompileInputs.cache
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.dll
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.pdb

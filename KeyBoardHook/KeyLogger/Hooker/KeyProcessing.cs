@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Text;
 using System.Windows.Forms;
+using KeyBoardHook.Common.Native;
 using KeyBoardHook.KeyLogger.Enums;
-using KeyBoardHook.KeyLogger.Native;
 using Keys = System.Windows.Forms.Keys;
 
 namespace KeyBoardHook.KeyLogger.Hooker
