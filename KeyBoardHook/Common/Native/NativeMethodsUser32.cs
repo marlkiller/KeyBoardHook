@@ -9,25 +9,6 @@ namespace KeyBoardHook.Common.Native
 {
     public static partial class NativeMethods
     {
-        
-        public struct KBDLLHOOKSTRUCT
-        {
-            public int vkCode;
-            public int scanCode;
-            public int flags;
-            public int time;
-            public int dwExtraInfo;
-        }
-        public const int WM_LBUTTONDOWN = 0x201;
-
-        [StructLayout(LayoutKind.Sequential)]
-        public class MouseHookStruct
-        {
-            public POINT pt;
-            public int hwnd;
-            public int wHitTestCode;
-            public int dwExtraInfo;
-        }
 
         [StructLayout(LayoutKind.Sequential)]
         public class MouseLLHookStruct
@@ -79,14 +60,11 @@ namespace KeyBoardHook.Common.Native
         // ): HHOOK;            {返回钩子的句柄; 0 表示失败}
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr SetWindowsHookEx(HookType hookType, HookProc lpfn, IntPtr hMod, IntPtr dwThreadId);
-        [DllImport("user32.dll", SetLastError = true, EntryPoint = "SetWindowsHookEx")]
-        internal static extern IntPtr SetWindowsHookEx2(HookType hookType, HookProc2 lpfn, IntPtr hMod, IntPtr dwThreadId);
-
+        
         
         [DllImport("user32.dll")]
         internal static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll", EntryPoint = "CallNextHookEx")]
-        internal static extern IntPtr CallNextHookEx2(IntPtr hhk, int nCode, IntPtr wParam, keyboardHookStruct lParam);
+        
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -108,7 +86,6 @@ namespace KeyBoardHook.Common.Native
 
 
         public delegate IntPtr HookProc(int code, IntPtr wParam, IntPtr lParam);
-        public delegate IntPtr HookProc2(int code, IntPtr wParam, ref NativeMethods.keyboardHookStruct lParam);
 
         internal delegate void WinEventDelegate(
             IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread,
@@ -118,9 +95,7 @@ namespace KeyBoardHook.Common.Native
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        [DllImport("user32.dll", EntryPoint = "FindWindowEx")]
-        private static extern IntPtr FindWindowEx(IntPtr lpszParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
-        
+                
         public struct keyboardHookStruct
         {
             public int vkCode;

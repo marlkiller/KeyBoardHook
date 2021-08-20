@@ -93,7 +93,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(103, 21);
             this.textBox4.TabIndex = 5;
-            this.textBox4.Text = "计算器";
+            this.textBox4.Text = "Quasar - Connected: 0";
             // 
             // comboBox1
             // 

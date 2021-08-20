@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -41,7 +42,13 @@ namespace KeyBoardHook.ExternalWindow
         public IntPtr Hook(HookType hookType,IntPtr hMod,IntPtr threadId)
         {
             if (_mourseHookHandle==IntPtr.Zero)
-                _mourseHookHandle = NativeMethods.SetWindowsHookEx(hookType, MouseHookProc, IntPtr.Zero,threadId);
+                _mourseHookHandle = NativeMethods.SetWindowsHookEx(hookType, MouseHookProc, hMod,threadId);
+            
+            if (_mourseHookHandle == IntPtr.Zero)
+            {
+                var errorCode = Marshal.GetLastWin32Error();
+                throw new Win32Exception(errorCode);
+            }
             return _mourseHookHandle;
         }
         public void UnHook()

