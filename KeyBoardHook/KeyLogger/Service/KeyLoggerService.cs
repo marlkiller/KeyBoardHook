@@ -81,6 +81,12 @@ namespace KeyBoardHook.KeyLogger.Service
             mouseHookService.UnHook();
         }
 
+        // SetWindowsHookEx有两种钩子函数，一种是全局钩子(global hook)，另一种是线程钩子(thread hook)。
+        // 全局钩子能够截取所有线程的消息，但是全局钩子函数必须存在于一个dll中。线程钩子只能截取属于当前进程中的线程的消息，钩子函数不需要放 在dll中。
+        // SetWinEventHook也有两种钩子函数，一种是进程内钩子(in-context hook)，另一种是进程外钩子(out-of-context hook)。
+        // 进程内钩子函数必须放在dll中，将被映射到所有进程中。进程外钩子函数不会被映射到别的进程中，所以也不需要被放到dll中。不管进程内或 进程外钩子都能截取到所有进程的消息，区别仅是进程内钩子效率更高。
+        // SetWindowsHookEx 和SetWinEventHook两种方法截取的消息的类型不一样。SetWindowsHookEx能截取所有WM_开头的消息。而 SetWinEventHook截取的消息都是EVENT_开头的，这些消息所有都是跟对象的状态相关的，所以它无法获取根鼠标键盘相关的消息。
+        // SetWindowsHookEx设定的全局钩子必须被注入到别的进程中，所以就无法截取到一些有限制的进程的消息，比如命令行窗口(console window)。而SetWinEventHook的进程外钩子就没有这个限制
         public void Start(string type,string className ,string title)
         {
 
