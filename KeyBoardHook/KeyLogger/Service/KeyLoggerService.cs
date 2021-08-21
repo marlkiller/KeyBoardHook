@@ -87,25 +87,28 @@ namespace KeyBoardHook.KeyLogger.Service
             IntPtr threadId = IntPtr.Zero;
 
             IntPtr moduleHandle;
+            IntPtr hMod;
             switch (type)
             {
                 case "当前进程钩子":
                     threadId = NativeMethods.GetCurrentThreadId();
-                    _keyboardHook.Hook(HookType.WH_KEYBOARD,IntPtr.Zero, threadId);
-                    mouseHookService.Hook(HookType.WH_MOUSE,IntPtr.Zero, threadId);
+                    hMod = NativeMethods.LoadLibrary("user32.dll");
+                    _keyboardHook.Hook(HookType.WH_KEYBOARD,hMod, threadId);
+                    mouseHookService.Hook(HookType.WH_MOUSE,hMod, threadId);
                     _activeWindowHook.Hook(threadId);
                     break;
                 case "全局钩子":
                     threadId = IntPtr.Zero;
-                    moduleHandle = NativeMethods.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
-                    _keyboardHook.Hook(HookType.WH_KEYBOARD_LL,moduleHandle, threadId);
-                    mouseHookService.Hook(HookType.WH_MOUSE_LL,moduleHandle, threadId);
+                    hMod = NativeMethods.LoadLibrary("user32.dll");
+                    // moduleHandle = NativeMethods.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
+                    _keyboardHook.Hook(HookType.WH_KEYBOARD_LL,hMod, threadId);
+                    mouseHookService.Hook(HookType.WH_MOUSE_LL,hMod, threadId);
                     _activeWindowHook.Hook(threadId);
                     break;
                 case "指定窗口进程钩子":
 
-                    // injectionCCharpDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
-                    injectionCDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
+                    injectionCCharpDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
+                    // injectionCDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
                     break;
               
             }
@@ -126,9 +129,6 @@ namespace KeyBoardHook.KeyLogger.Service
             string args = "args";
             MessageBox.Show(Injector.InjectManaged((uint) threadId, sDllPath, "MyLib.MyLib", "demo", args, out num)
                 .ToString());
-            
-            
-            
 
         }
 

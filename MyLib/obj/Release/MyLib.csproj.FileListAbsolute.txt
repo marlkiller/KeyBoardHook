@@ -10,3 +10,5 @@ C:/Work/WorkSpace/c#/KeyBoardHook/MyLib/obj/Release/MyLib.pdb
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/obj/Release/MyLib.csproj.CoreCompileInputs.cache
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/obj/Release/MyLib.dll
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/obj/Release/MyLib.pdb
+/Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/bin/Release/DotNetDetour.dll
+/Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/obj/Release/MyLib.csproj.CopyComplete
