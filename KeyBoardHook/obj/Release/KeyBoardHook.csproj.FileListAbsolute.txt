@@ -14,7 +14,8 @@ C:/Work/WorkSpace/c#/KeyBoardHook/KeyBoardHook/obj/Release/KeyBoardHook.pdb
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/bin/Release/KeyBoardHook.exe.config
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/bin/Release/KeyBoardHook.exe
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/bin/Release/KeyBoardHook.pdb
-/Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/bin/Release/ClassLibrary1.pdb
+/Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/bin/Release/MyLib.dll
+/Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/bin/Release/MyLib.pdb
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/obj/Release/KeyBoardHook.csproj.AssemblyReference.cache
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/obj/Release/KeyBoardHook.Form1.resources
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/KeyBoardHook/obj/Release/KeyBoardHook.Properties.Resources.resources

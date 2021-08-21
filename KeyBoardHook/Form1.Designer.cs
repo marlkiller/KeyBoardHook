@@ -73,9 +73,11 @@
             // 
             this.textBox2.Location = new System.Drawing.Point(598, 300);
             this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
+            // this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(125, 21);
             this.textBox2.TabIndex = 3;
+            this.textBox2.Text = "ddddddd";
+
             // 
             // textBox3
             // 
@@ -84,7 +86,7 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(103, 21);
             this.textBox3.TabIndex = 4;
-            this.textBox3.Text = "Windows.UI.Core.CoreWindow";
+            this.textBox3.Text = "";
             // 
             // textBox4
             // 
@@ -93,7 +95,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(103, 21);
             this.textBox4.TabIndex = 5;
-            this.textBox4.Text = "Quasar - Connected: 0";
+            this.textBox4.Text = "无标题 - 记事本";
             // 
             // comboBox1
             // 

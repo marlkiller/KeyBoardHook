@@ -41,7 +41,9 @@ namespace KeyBoardHook.Common.Native
         [DllImport("user32.dll")]
         internal static extern int ToAscii(uint uVirtKey, uint uScanCode, byte[] lpKeyState, [Out] StringBuilder lpChar,
             uint uFlags);
-
+        [DllImport("user32.dll", EntryPoint = "FindWindowEx")]
+        public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass,
+            string lpszWindow);
         
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetCurrentThreadId();
@@ -49,9 +51,36 @@ namespace KeyBoardHook.Common.Native
         [DllImport("kernel32.dll", CharSet=CharSet.Auto)]
         public static extern IntPtr GetModuleHandle(IntPtr lpModule);
         [DllImport("kernel32", SetLastError = true)]
-        static extern IntPtr LoadLibrary(string lpFileName);
+        public static extern IntPtr LoadLibrary(string lpFileName);
+        
         [DllImport("user32.dll")]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out IntPtr lpdwProcessId);
+        
+        [DllImport("kernel32.dll")]
+        public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, byte[] buffer, uint nsize, int filewriten);
+        
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CloseHandle(IntPtr hObject);
+        
+        
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetProcAddress(IntPtr hwnd, string lpname);
+        
+        [DllImport("kernel32.dll")]
+        public static extern int GetModuleHandleA(string name);
+        
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttribute, IntPtr dwStackSize, IntPtr lpStartAddress,
+            IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
+        
+        
+        [DllImport("kernel32.dll")] //声明API函数
+        public static extern IntPtr VirtualAllocEx(IntPtr hwnd, IntPtr lpaddress, IntPtr size, int type, int tect);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, IntPtr dwProcessId);   
+
+        
         // SetWindowsHookEx(
         // idHook: Integer;   {钩子类型}
         // lpfn: TFNHookProc; {函数指针}
@@ -92,10 +121,9 @@ namespace KeyBoardHook.Common.Native
             uint dwmsEventTime);
 
         
+       
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-                
+        public extern static IntPtr FindWindow(string lpClassName, string lpWindowName);
         public struct keyboardHookStruct
         {
             public int vkCode;
