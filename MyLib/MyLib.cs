@@ -61,12 +61,21 @@ namespace MyLib
 
         public static int demo(string s)
         {
-            
-            mouseHookService.MouseMoveEvent += mh_MouseMoveEvent;
-            var currentThreadId = NativeMethods.GetCurrentThreadId();
-            var moduleHandle = NativeMethods.LoadLibrary("user32.dll");
-            MessageBox.Show("demo currentThreadId " + currentThreadId + " new IntPtr(Process.GetCurrentProcess().Id) " + new IntPtr(Process.GetCurrentProcess().Id));
-            mouseHookService.Hook(HookType.WH_MOUSE,moduleHandle, currentThreadId);
+
+            try
+            {
+                mouseHookService.MouseMoveEvent += mh_MouseMoveEvent;
+                var currentThreadId = NativeMethods.GetCurrentThreadId();
+                var moduleHandle = NativeMethods.LoadLibrary("user32.dll");
+                MessageBox.Show("demo currentThreadId " + currentThreadId + " new IntPtr(Process.GetCurrentProcess().Id) " + new IntPtr(Process.GetCurrentProcess().Id));
+                mouseHookService.Hook(HookType.WH_MOUSE,moduleHandle, currentThreadId);
+                
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.StackTrace);
+                throw;
+            }
             return 1;
         }
 
