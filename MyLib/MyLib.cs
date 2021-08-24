@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using DotNetDetour;
 using Enums;
 using ExternalWindow;
 using Native;
@@ -13,7 +11,7 @@ using Native;
 
 namespace MyLib
 {
-    public class MyLib
+    public class MyLibClass
     {
         private static MouseHookService mouseHookService = new MouseHookService();
          IntPtr staticEdithWnd = new IntPtr(0); 
@@ -59,6 +57,11 @@ namespace MyLib
             // NativeMethods.SendMessage(staticEdithWnd, WM_SETTEXT, (IntPtr)0, "Move：[" + e.X+ ":" + e.Y + "]");
         }
 
+        public static void hello()
+        {
+            MessageBox.Show("C# DLL Injection Successful");
+        }
+        
         public static int demo(string s)
         {
 

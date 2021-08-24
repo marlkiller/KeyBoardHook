@@ -1,9 +1,3 @@
-C:/Work/WorkSpace/c#/KeyBoardHook/MyLib/bin/Release/MyLib.dll
-C:/Work/WorkSpace/c#/KeyBoardHook/MyLib/bin/Release/MyLib.pdb
-C:/Work/WorkSpace/c#/KeyBoardHook/MyLib/obj/Release/MyLib.csprojAssemblyReference.cache
-C:/Work/WorkSpace/c#/KeyBoardHook/MyLib/obj/Release/MyLib.csproj.CoreCompileInputs.cache
-C:/Work/WorkSpace/c#/KeyBoardHook/MyLib/obj/Release/MyLib.dll
-C:/Work/WorkSpace/c#/KeyBoardHook/MyLib/obj/Release/MyLib.pdb
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/bin/Release/MyLib.dll
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/bin/Release/MyLib.pdb
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/obj/Release/MyLib.csproj.AssemblyReference.cache
@@ -11,3 +5,10 @@ C:/Work/WorkSpace/c#/KeyBoardHook/MyLib/obj/Release/MyLib.pdb
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/obj/Release/MyLib.dll
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/obj/Release/MyLib.pdb
 /Users/voidm/Documents/develop/workSpace/net/KeyBoardHook/MyLib/obj/Release/MyLib.csproj.CopyComplete
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\bin\Release\MyLib.dll
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\bin\Release\MyLib.pdb
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.csproj.CoreCompileInputs.cache
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.csproj.CopyComplete
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.dll
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.pdb
+C:\Work\WorkSpace\c#\KeyBoardHook\MyLib\obj\Release\MyLib.csprojAssemblyReference.cache

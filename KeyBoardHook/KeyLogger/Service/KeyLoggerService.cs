@@ -113,8 +113,8 @@ namespace KeyBoardHook.KeyLogger.Service
                     break;
                 case "指定窗口进程钩子":
 
-                    injectionCCharpDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
-                    // injectionCDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
+                    // injectionCCharpDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
+                    injectionCDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
                     break;
               
             }
@@ -124,16 +124,15 @@ namespace KeyBoardHook.KeyLogger.Service
 
         public void injectionCCharpDLL(string className, string title)
         {
-            
+            // 调用注入 .net DLL方法
             string sDllPath;
             sDllPath = "C:\\Users\\voidm\\Desktop\\Release\\MyLib.dll";
             var hWnd = NativeMethods.FindWindow(className,title);
             IntPtr threadId;
             var windowThreadProcessId = NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
-            // MessageBox.Show("windowThreadProcessId" + windowThreadProcessId + " threadId " + threadId  + " (uint) threadId" + (uint) threadId);
             int num;
             string args = "args";
-            MessageBox.Show(Injector.InjectManaged((uint) threadId, sDllPath, "MyLib.MyLib", "demo", args, out num)
+            MessageBox.Show(Injector.InjectManaged((uint) threadId, sDllPath, "MyLib.MyLibClass", "demo", args, out num)
                 .ToString());
 
         }
@@ -141,7 +140,7 @@ namespace KeyBoardHook.KeyLogger.Service
         public void injectionCDLL(string className, string title)
         {
             string sDllPath;
-            sDllPath = "C:\\Users\\voidm\\Desktop\\Release\\MyLib.dll";
+            sDllPath = "C:\\Work\\WorkSpace\\c++\\DllMain\\x64\\Release\\DllMain.dll";
 
             var hWnd = NativeMethods.FindWindow(className,title);
             IntPtr threadId;
@@ -185,7 +184,6 @@ namespace KeyBoardHook.KeyLogger.Service
                     MessageBox.Show("CreateRemoteThread 异常");
                     return;       
                 }
-                MessageBox.Show("CloseHandle");
                 NativeMethods.CloseHandle(hndProc);
             }
             
