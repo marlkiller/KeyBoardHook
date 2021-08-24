@@ -140,13 +140,13 @@ namespace KeyBoardHook.KeyLogger.Service
         public void injectionCDLL(string className, string title)
         {
             string sDllPath;
-            sDllPath = "C:\\Work\\WorkSpace\\c++\\DllMain\\x64\\Release\\DllMain.dll";
+            sDllPath = "C:\\Users\\voidm\\Desktop\\workspace\\hook\\DllMain.dll";
 
             var hWnd = NativeMethods.FindWindow(className,title);
             IntPtr threadId;
             var windowThreadProcessId = NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
 
-            MessageBox.Show($@"hWnd {hWnd},windowThreadProcessId {windowThreadProcessId},threadId {threadId}");
+            MessageBox.Show($@"injectionCDLL hWnd {hWnd},windowThreadProcessId {windowThreadProcessId},threadId {threadId}");
             {
                 // 用来获取目标进程句柄
                 IntPtr hndProc = NativeMethods.OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), true, threadId);
