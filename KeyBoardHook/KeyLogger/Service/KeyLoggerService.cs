@@ -73,12 +73,20 @@ namespace KeyBoardHook.KeyLogger.Service
             }
         }
 
-        public void Stop()
+        public void Stop(string type,string className ,string title)
         {
-            _keyLog.Save();
-            _activeWindowHook.UnHook();
-            _keyboardHook.UnHook();
-            mouseHookService.UnHook();
+               switch (type)
+            {
+                case "指定窗口进程钩子":
+                    unInjectionCDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
+                    break;
+                default:
+                    _keyLog.Save();
+                    _activeWindowHook.UnHook();
+                    _keyboardHook.UnHook();
+                    mouseHookService.UnHook();
+                    break;
+            }
         }
 
         // SetWindowsHookEx有两种钩子函数，一种是全局钩子(global hook)，另一种是线程钩子(thread hook)。
@@ -122,31 +130,87 @@ namespace KeyBoardHook.KeyLogger.Service
         public void injectionCCharpDLL(string className, string title)
         {
             // 调用注入 .net DLL方法
-            string sDllPath;
-            sDllPath = "C:\\Users\\voidm\\Desktop\\Release\\MyLib.dll";
-            var hWnd = NativeMethods.FindWindow(className,title);
-            IntPtr threadId;
-            var windowThreadProcessId = NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
-            int num;
-            string args = "args";
-            MessageBox.Show(Injector.InjectManaged((uint) threadId, sDllPath, "MyLib.MyLibClass", "demo", args, out num)
-                .ToString());
+            // string sDllPath;
+            // sDllPath = "C:\\Users\\voidm\\Desktop\\Release\\MyLib.dll";
+            // var hWnd = NativeMethods.FindWindow(className,title);
+            // IntPtr threadId;
+            // var windowThreadProcessId = NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
+            // int num;
+            // string args = "args";
+            // MessageBox.Show(Injector.InjectManaged((uint) threadId, sDllPath, "MyLib.MyLibClass", "demo", args, out num)
+            //     .ToString());
 
         }
+        
+        string sDllPath = "C:\\Work\\WorkSpace\\c++\\DllMain\\x64\\Release\\DllMain.dll";
+        // string sDllPath = "C:\\Users\\voidm\\Desktop\\workspace\\hook\\DllMain.dll";
+        public unsafe void unInjectionCDLL(string className, string title)
+        {
+            var hWnd = NativeMethods.FindWindow(className,title);
+            
+            // threadId = notepad 进程ID
+            // 使用TH32CS_SNAPMODULE参数，获取加载到notepad进程的DLL名称
+            IntPtr threadId;
+            var windowThreadProcessId = NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
+            
+            MessageBox.Show($@"injectionCDLL hWnd {hWnd},windowThreadProcessId {windowThreadProcessId},threadId {threadId}");
 
+            bool flag = false;
+            var modEntry = new NativeMethods.MODULEENTRY32 {dwSize = (uint) Marshal.SizeOf(typeof(NativeMethods.MODULEENTRY32))};
+            var snapshot = NativeMethods.CreateToolhelp32Snapshot(NativeMethods.SnapshotFlags.Module | NativeMethods.SnapshotFlags.Module32, threadId);
+            var module32First = NativeMethods.Module32First(snapshot, ref modEntry);
+            if (module32First)
+             {
+                 do {
+                     if (modEntry.szModule.Equals(sDllPath) || modEntry.szExePath.Equals(sDllPath))
+                     {
+                         flag = true;
+                         break;
+                     }
+                 } while (NativeMethods.Module32Next(snapshot, ref modEntry));
+             }
+             if (!flag)
+             {
+                 NativeMethods.CloseHandle(snapshot);
+             }
+            
+             var openProcess = NativeMethods.OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), true, threadId);
+             if (openProcess.Equals(IntPtr.Zero))
+             {
+                 MessageBox.Show("openProcess.Equals(IntPtr.Zero)");
+             }
+
+ 
+            IntPtr lpLLAddress = NativeMethods.GetProcAddress(NativeMethods.GetModuleHandle("kernel32.dll"), "FreeLibrary");
+            if (lpLLAddress == IntPtr.Zero)
+            {
+                MessageBox.Show("GetProcAddress 异常");
+                return;
+            }
+            var remoteThread = NativeMethods.CreateRemoteThread(openProcess, (IntPtr)null, (IntPtr)0, lpLLAddress, modEntry.modBaseAddr, 0, (IntPtr)null); 
+            if (remoteThread==(IntPtr)0)
+            {
+                MessageBox.Show("CreateRemoteThread 异常");
+            }
+            
+            NativeMethods.WaitForSingleObject(threadId, 60 * 1000);        
+            MessageBox.Show($@"unInjectionCDLL remoteThread {remoteThread} successful");
+
+            NativeMethods.CloseHandle(remoteThread);
+            NativeMethods.CloseHandle(openProcess);
+            NativeMethods.CloseHandle(snapshot);
+            
+        }
         public void injectionCDLL(string className, string title)
         {
-            string sDllPath;
-            sDllPath = "C:\\Users\\voidm\\Desktop\\workspace\\hook\\DllMain.dll";
-
             var hWnd = NativeMethods.FindWindow(className,title);
             IntPtr threadId;
             var windowThreadProcessId = NativeMethods.GetWindowThreadProcessId(hWnd, out threadId);
 
-            MessageBox.Show($@"injectionCDLL hWnd {hWnd},windowThreadProcessId {windowThreadProcessId},threadId {threadId}");
+            MessageBox.Show($@"injectionCDLL hWnd {hWnd},windowThreadProcessId {windowThreadProcessId},threadId -> {threadId}");
             {
                 // 用来获取目标进程句柄
-                IntPtr hndProc = NativeMethods.OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), true, threadId);
+                IntPtr hndProc = NativeMethods.OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), false, threadId);
                 if (hndProc == IntPtr.Zero)
                 {
                     MessageBox.Show("OpenProcess 异常");
@@ -155,6 +219,7 @@ namespace KeyBoardHook.KeyLogger.Service
                     
                 // GetModuleHandle()和GetProcAddress()用来获取LoadLibrary()函数地址，进而用来调用LoadLibrary()
                 // (Unicod为LoadLibraryW，ANSI为LoadLibraryA)
+                // 使用LoadLibrary()加载某个DLL时，该DLL中的DllMain()函数会被调用执行。DLL注入的原理就是从外部促使目标进程调用LoadLibrary() API。
                 IntPtr lpLLAddress = NativeMethods.GetProcAddress(NativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
                 if (lpLLAddress == IntPtr.Zero)
                 {
@@ -186,7 +251,8 @@ namespace KeyBoardHook.KeyLogger.Service
                     MessageBox.Show("CreateRemoteThread 异常");
                     return;       
                 }
-                // NativeMethods.CloseHandle(remoteThread);
+                NativeMethods.WaitForSingleObject(remoteThread, 60 * 1000);        
+                NativeMethods.CloseHandle(remoteThread);
                 NativeMethods.CloseHandle(hndProc);
             }
             

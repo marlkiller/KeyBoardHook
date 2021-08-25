@@ -7,7 +7,7 @@ using KeyBoardHook.KeyLogger.Enums;
 
 namespace KeyBoardHook.Common.Native
 {
-    public static partial class NativeMethods
+    public static unsafe  partial class NativeMethods
     {
 
         [StructLayout(LayoutKind.Sequential)]
@@ -27,10 +27,57 @@ namespace KeyBoardHook.Common.Native
             public int y;
         }
         
+        // Wait functions
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+        [DllImport("kernel32.dll")]
+        public static extern uint WaitForMultipleObjects(uint nCount, IntPtr[] lpHandles, bool bWaitAll, uint dwMilliseconds);
+        
+        
+        [Flags]
+        public enum SnapshotFlags : uint {
+            HeapList = 0x00000001,
+            Process  = 0x00000002,
+            Thread   = 0x00000004,
+            Module   = 0x00000008,
+            Module32 = 0x00000010,
+            Inherit  = 0x80000000,
+            All      = 0x0000001F,
+            NoHeaps  = 0x40000000
+        }
+        
+        [DllImport("KERNEL32.DLL ")]
+        public static extern IntPtr CreateToolhelp32Snapshot(SnapshotFlags flags, IntPtr processid);
+        
         [DllImport("User32.dll", EntryPoint = "SendMessage")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, string lParam);
 
-       
+        [DllImport("kernel32.dll")]
+        public static extern bool Module32First(IntPtr hSnapshot, ref MODULEENTRY32 lpme);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool Module32Next(IntPtr hSnapshot, ref MODULEENTRY32 lpme);
+        
+        public const int MAX_PATH = 260;
+        public const int MAX_MODULE_NAME32 = 255;
+
+        [StructLayoutAttribute(LayoutKind.Sequential)]
+        public struct MODULEENTRY32
+        {
+            internal uint dwSize;
+            internal uint th32ModuleID;
+            internal uint th32ProcessID;
+            internal uint GlblcntUsage;
+            internal uint ProccntUsage;
+            public IntPtr modBaseAddr;
+            internal uint modBaseSize;
+            IntPtr hModule;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            internal string szModule;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            internal string szExePath;
+        };
+        
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr GetForegroundWindow();
 
