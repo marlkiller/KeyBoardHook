@@ -107,7 +107,9 @@ namespace KeyBoardHook.Common.Native
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out IntPtr lpdwProcessId);
         
         [DllImport("kernel32.dll")]
-        public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, byte[] buffer, uint nsize, int filewriten);
+        // public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, byte[] buffer, uint nsize, int filewriten);
+        public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, string buffer, int nsize, int filewriten);
+
         
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CloseHandle(IntPtr hObject);
@@ -122,10 +124,19 @@ namespace KeyBoardHook.Common.Native
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttribute, IntPtr dwStackSize, IntPtr lpStartAddress,
             IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
-        
-        
+
+
+
+        public static readonly int ExecuteReadWrite = 0x40;
+        public static readonly int Commit = 0x1000;
+
+
         [DllImport("kernel32.dll")] //声明API函数
         public static extern IntPtr VirtualAllocEx(IntPtr hwnd, IntPtr lpaddress, IntPtr size, int type, int tect);
+
+
+        public static readonly int PROCESS_ALL_ACCESS = 0x1F0FFF;
+
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, IntPtr dwProcessId);   

