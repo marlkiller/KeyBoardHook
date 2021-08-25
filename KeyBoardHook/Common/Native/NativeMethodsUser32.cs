@@ -26,6 +26,9 @@ namespace KeyBoardHook.Common.Native
             public int x;
             public int y;
         }
+        
+        [DllImport("User32.dll", EntryPoint = "SendMessage")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, string lParam);
 
        
         [DllImport("user32.dll", SetLastError = true)]

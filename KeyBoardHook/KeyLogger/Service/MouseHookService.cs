@@ -11,34 +11,9 @@ namespace KeyBoardHook.ExternalWindow
     public class MouseHookService
     {
         
-        private Point point;
-        private Point Point
-        {
-            get { return point; }
-            set
-            {
-                if (point != value)
-                {
-                    point = value;
-                    if (MouseMoveEvent != null)
-                    {
-                        var e = new MouseEventArgs(MouseButtons.Left, 0, point.X, point.Y, 0);
-                        MouseMoveEvent(this, e);
-                    }
-                }
-            }
-        }
         
         private IntPtr _mourseHookHandle;
 
-        public MouseHookService()
-        {
-            this.Point = new Point(); 
-            
-        }
-        
-       
-        
         public IntPtr Hook(HookType hookType,IntPtr hMod,IntPtr threadId)
         {
             if (_mourseHookHandle==IntPtr.Zero)
