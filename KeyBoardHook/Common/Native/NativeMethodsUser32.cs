@@ -106,8 +106,21 @@ namespace KeyBoardHook.Common.Native
         [DllImport("user32.dll")]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out IntPtr lpdwProcessId);
         
+        
+        // [1]. hProcess
+        //     由OpenProcess返回的进程句柄。
+        // 如参数传数据为 INVALID_HANDLE_VALUE 【即-1】目标进程为自身进程
+        // [2]. lpBaseAddress
+        //     要写的内存首地址
+        // 在写入之前，此函数将先检查目标地址是否可用，并能容纳待写入的数据。
+        // [3]. lpBuffer
+        //     指向要写的数据的指针。
+        // [4]. nSize
+        //     要写入的字节数。
+        // 返回值
+        //     非零值代表成功。
+        // 可用GetLastError获取更多的错误详细信息
         [DllImport("kernel32.dll")]
-        // public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, byte[] buffer, uint nsize, int filewriten);
         public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, string buffer, int nsize, int filewriten);
 
         
@@ -121,12 +134,52 @@ namespace KeyBoardHook.Common.Native
         [DllImport("kernel32.dll")]
         public static extern int GetModuleHandleA(string name);
         
+        
+        public delegate int ThreadProc(IntPtr param);
+
+        [DllImport("kernel32")]
+        public static extern IntPtr CreateThread(
+            IntPtr lpThreadAttributes,
+            uint dwStackSize,
+            ThreadProc lpStartAddress, // ThreadProc as friendly delegate
+            IntPtr lpParameter,
+            uint dwCreationFlags,
+            out uint dwThreadId);
+        
+        //     hProcess 
+        //          [输入] 进程句柄
+        //     lpThreadAttributes 
+        //         [输入] 线程安全描述字，指向SECURITY_ATTRIBUTES结构的指针
+        //     dwStackSize 
+        //         [输入] 线程栈大小，以字节表示
+        //     lpStartAddress 
+        //         [输入] 一个LPTHREAD_START_ROUTINE类型的指针，指向在远程进程中执行的函数地址
+        //     lpParameter 
+        //         [输入] 传入参数
+        //     dwCreationFlags 
+        //         [输入] 创建线程的其它标志
+        //
+        //     lpThreadId 
+        //         [输出] 线程身份标志，如果为NULL,则不返回
+        //
+        //     返回值
+        // 成功返回新线程句柄，失败返回NULL，并且可调用GetLastError获得错误值。
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttribute, IntPtr dwStackSize, IntPtr lpStartAddress,
             IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
 
+        
+        public static uint LIST_MODULES_ALL = 0x03;
 
+        [DllImport("psapi.dll")]
+        public static extern bool EnumProcessModulesEx(IntPtr hProcess, 
+            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U4)] [In][Out] IntPtr[] lphModule,
+            int cb, [MarshalAs(UnmanagedType.U4)] out int lpcbNeeded, uint dwFilterFlag);
 
+        [DllImport("psapi.dll")]
+        public static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName,
+            [In] [MarshalAs(UnmanagedType.U4)] int nSize);
+        
         public static readonly int ExecuteReadWrite = 0x40;
         public static readonly int Commit = 0x1000;
 

