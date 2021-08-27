@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using FastWin32.Diagnostics;
+
 using KeyBoardHook.Common.Native;
 using KeyBoardHook.ExternalWindow;
 using KeyBoardHook.KeyLogger.Entity;

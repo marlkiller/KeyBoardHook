@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using ClassLibrary1;
+
 using KeyBoardHook.Common.Native;
 using KeyBoardHook.KeyLogger.Entity;
 using KeyBoardHook.KeyLogger.Enums;
 using KeyBoardHook.KeyLogger.Service;
+// using ClassLibrary1;
 
 namespace KeyBoardHook
 {

@@ -36,12 +36,12 @@
         <Prefer32bit>false</Prefer32bit>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="ClassLibrary1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\ClassLibrary1\ClassLibrary1\bin\Debug\ClassLibrary1.dll</HintPath>
-        </Reference>
-        <Reference Include="FastWin32, Version=2.1.19.1886, Culture=neutral, PublicKeyToken=c28cf53d24f32720">
-          <HintPath>bin\Release\FastWin32.dll</HintPath>
-        </Reference>
+<!--        <Reference Include="ClassLibrary1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">-->
+<!--          <HintPath>..\..\ClassLibrary1\ClassLibrary1\bin\Debug\ClassLibrary1.dll</HintPath>-->
+<!--        </Reference>-->
+<!--        <Reference Include="FastWin32, Version=2.1.19.1886, Culture=neutral, PublicKeyToken=c28cf53d24f32720">-->
+<!--          <HintPath>bin\Release\FastWin32.dll</HintPath>-->
+<!--        </Reference>-->
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Xml.Linq" />
