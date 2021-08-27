@@ -120,8 +120,9 @@ namespace KeyBoardHook.Common.Native
         // 返回值
         //     非零值代表成功。
         // 可用GetLastError获取更多的错误详细信息
+        // void* buffer , [MarshalAs(UnmanagedType.AsAny)] object lpBuffer
         [DllImport("kernel32.dll")]
-        public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, string buffer, int nsize, int filewriten);
+        public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, [MarshalAs(UnmanagedType.AsAny)] object lpBuffer, int nsize, out IntPtr lpNumberOfBytesWritten);
 
         
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -168,6 +169,13 @@ namespace KeyBoardHook.Common.Native
         public static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttribute, IntPtr dwStackSize, IntPtr lpStartAddress,
             IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
 
+        
+        [StructLayoutAttribute(LayoutKind.Sequential)]
+        public struct RemoteParameter
+        {
+            public IntPtr param1;
+            public IntPtr param2;
+        };
         
         public static uint LIST_MODULES_ALL = 0x03;
 

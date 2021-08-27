@@ -142,8 +142,8 @@ namespace KeyBoardHook.KeyLogger.Service
 
         }
         
-        string sDllPath = "C:\\Work\\WorkSpace\\c++\\DllMain\\x64\\Release\\DllMain.dll";
-        // string sDllPath = "C:\\Users\\voidm\\Desktop\\workspace\\hook\\DllMain.dll";
+        // string sDllPath = "C:\\Work\\WorkSpace\\c++\\DllMain\\x64\\Release\\DllMain.dll";
+        string sDllPath = "C:\\Users\\voidm\\Desktop\\workspace\\hook\\DllMain.dll";
         public unsafe void unInjectionCDLL(string className, string title)
         {
             var hWnd = NativeMethods.FindWindow(className,title);
@@ -210,7 +210,7 @@ namespace KeyBoardHook.KeyLogger.Service
             }
             
         }
-        public void injectionCDLL(string className, string title)
+        public unsafe void injectionCDLL(string className, string title)
         {
             var hWnd = NativeMethods.FindWindow(className,title);
             IntPtr threadId;
@@ -237,7 +237,18 @@ namespace KeyBoardHook.KeyLogger.Service
                 // byte[] bytes = Encoding.ASCII.GetBytes(sDllPath);
                 // var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, bytes, (uint)bytes.Length, 0);
                 // 用来将 sDllPath 路径写入分配的缓冲区
-                var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, sDllPath, sDllPath.Length + 1, 0);
+                // BitConverter.GetBytes(UInt64 Data)
+                
+                byte[] buffer = new byte[sDllPath.Length];
+                int index = 0;
+                foreach (char ch in sDllPath)
+                {
+                    buffer[index] = (byte)ch;
+                    index++;
+                }
+                // float* buffers = stackalloc float[3];
+                IntPtr lpNumberOfBytesWritten;
+                var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, buffer, sDllPath.Length + 1, out lpNumberOfBytesWritten);
                 if (writeProcessMemory == 0)
                 {
                     MessageBox.Show("WriteProcessMemory 异常");

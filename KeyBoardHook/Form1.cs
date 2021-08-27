@@ -6,6 +6,8 @@ using System.Text;
 using System.Windows.Forms;
 using ClassLibrary1;
 using KeyBoardHook.Common.Native;
+using KeyBoardHook.KeyLogger.Entity;
+using KeyBoardHook.KeyLogger.Enums;
 using KeyBoardHook.KeyLogger.Service;
 
 namespace KeyBoardHook
@@ -83,30 +85,55 @@ namespace KeyBoardHook
             // MessageBox.Show(String.Format("程序基址 name {0}, address {1}", modules[0], modulePointers[0].ToString("X") ));
             //
             // C# 注入本地方法
-            // int pid = Process.GetCurrentProcess().Id;
-            // string fileName = Process.GetCurrentProcess().MainModule.FileName.Replace(".vshost", "");     
-            // NativeMethods.ThreadProc proc = new NativeMethods.ThreadProc(MyThreadProc);
-            // IntPtr fpProc = Marshal.GetFunctionPointerForDelegate(proc);
-            // MessageBox.Show(fpProc.ToString("X"));
-            //
-            // IntPtr dwThreadId;
-            // IntPtr hThread = NativeMethods.CreateRemoteThread(
-            //     Process.GetCurrentProcess().Handle,
-            //     IntPtr.Zero,
-            //     IntPtr.Zero, 
-            //     fpProc, new IntPtr(6789),
-            //     0,
-            //     (IntPtr)null);
-            // NativeMethods.WaitForSingleObject(hThread,60*1000);
+            int pid = Process.GetCurrentProcess().Id;
+            string fileName = Process.GetCurrentProcess().MainModule.FileName.Replace(".vshost", "");     
+            NativeMethods.ThreadProc proc = new NativeMethods.ThreadProc(MyThreadProc);
+            IntPtr fpProc = Marshal.GetFunctionPointerForDelegate(proc);
+            MessageBox.Show(fpProc.ToString("X"));
+
+
+            var remoteParameter = new NativeMethods.RemoteParameter();
+            remoteParameter.param1 = new IntPtr(1);
+            remoteParameter.param2 = new IntPtr(2);
+            
+            
+            IntPtr lpAddress = NativeMethods.VirtualAllocEx(IntPtr.Zero, (IntPtr)null, (IntPtr)2020, NativeMethods.Commit,NativeMethods.ExecuteReadWrite);
+            IntPtr lpNumberOfBytesWritten;
+            var writeProcessMemory = NativeMethods.WriteProcessMemory(IntPtr.Zero, lpAddress, remoteParameter, 2020, out lpNumberOfBytesWritten);
+
+            
+            IntPtr dwThreadId;
+            IntPtr hThread = NativeMethods.CreateRemoteThread(
+                Process.GetCurrentProcess().Handle,
+                IntPtr.Zero,
+                IntPtr.Zero, 
+                fpProc, new IntPtr(12),
+                0,
+                (IntPtr)null);
+            NativeMethods.WaitForSingleObject(hThread,60*1000);
+
 
         }
-        
-        static int MyThreadProc(IntPtr param)
+
+        static int MyThreadProc(IntPtr param1 )
         {
             int pid = Process.GetCurrentProcess().Id;
-            MessageBox.Show("MyThreadProc : " + param);
+            MessageBox.Show("MyThreadProc : " + param1 );
             return 1;
         }
+        
+        static int MyThreadProc(IntPtr param1,IntPtr param2)
+        {
+            int pid = Process.GetCurrentProcess().Id;
+            MessageBox.Show("MyThreadProc : " + param1 + ":" + param2);
+            return 1;
+        }
+
+        // class Dev
+        // {
+        //     IntPtr param1 = IntPtr.Zero;
+        //     IntPtr param2 = new IntPtr(12);
+        // }
 
     }
 }
