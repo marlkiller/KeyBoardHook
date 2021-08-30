@@ -200,7 +200,7 @@ namespace KeyBoardHook.KeyLogger.Service
             MessageBox.Show($@"unInjectionCDLL remoteThread {remoteThread} successful");
 
             // 释放申请的内存
-            // VirtualFreeEx( openProcess, lpAddress, (IntPtr)sDllPath.Length + 1, MEM_RELEASE );
+            NativeMethods.VirtualFreeEx( openProcess, lpAddress, (IntPtr)sDllPath.Length + 1, NativeMethods.Release );
             
             NativeMethods.CloseHandle(remoteThread);
             NativeMethods.CloseHandle(openProcess);
@@ -210,6 +210,9 @@ namespace KeyBoardHook.KeyLogger.Service
             }
             
         }
+
+        private IntPtr lpAddress;
+        
         public unsafe void injectionCDLL(string className, string title)
         {
             var hWnd = NativeMethods.FindWindow(className,title);
@@ -227,7 +230,7 @@ namespace KeyBoardHook.KeyLogger.Service
                 }
                     
                 // 在远程进程中为 sDllPath 分配内存
-                IntPtr lpAddress = NativeMethods.VirtualAllocEx(openProcess, (IntPtr)null, (IntPtr)sDllPath.Length + 1, NativeMethods.Commit, NativeMethods.ExecuteReadWrite);
+                lpAddress = NativeMethods.VirtualAllocEx(openProcess, (IntPtr)null, (IntPtr)sDllPath.Length + 1, NativeMethods.Commit, NativeMethods.ExecuteReadWrite);
 
                 if (lpAddress == IntPtr.Zero)
                 {

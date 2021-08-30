@@ -168,6 +168,10 @@ namespace KeyBoardHook.Common.Native
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttribute, IntPtr dwStackSize, IntPtr lpStartAddress,
             IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
+        
+        // pointer = Generic.GetLibraryAddress("kernel32.dll", "CreateRemoteThread");
+        // var createRemoteThread = Marshal.GetDelegateForFunctionPointer(pointer, typeof(CreateRemoteThread)) as CreateRemoteThread;
+        // createRemoteThread(hProcess, IntPtr.Zero, 0, alloc, IntPtr.Zero, 0, IntPtr.Zero);
 
         
         [StructLayoutAttribute(LayoutKind.Sequential)]
@@ -192,9 +196,17 @@ namespace KeyBoardHook.Common.Native
         public static readonly int Commit = 0x1000;
 
 
-        [DllImport("kernel32.dll")] //声明API函数
+        // 申请内存空间
+        [DllImport("kernel32.dll")]
         public static extern IntPtr VirtualAllocEx(IntPtr hwnd, IntPtr lpaddress, IntPtr size, int type, int tect);
 
+
+        public static readonly int Release = 0x8000;
+
+        // 释放内存空间
+        [DllImport("kernel32.dll")]
+        public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, int dwFreeType);
+        
 
         public static readonly int PROCESS_ALL_ACCESS = 0x1F0FFF;
 
