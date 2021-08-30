@@ -37,6 +37,9 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -80,18 +83,18 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(598, 51);
+            this.textBox3.Location = new System.Drawing.Point(625, 51);
             this.textBox3.MaxLength = 1111;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(103, 21);
+            this.textBox3.Size = new System.Drawing.Size(98, 21);
             this.textBox3.TabIndex = 4;
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(598, 78);
+            this.textBox4.Location = new System.Drawing.Point(625, 78);
             this.textBox4.MaxLength = 1111;
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(103, 21);
+            this.textBox4.Size = new System.Drawing.Size(98, 21);
             this.textBox4.TabIndex = 5;
             this.textBox4.Text = "无标题 - 记事本";
             // 
@@ -115,11 +118,38 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(32, 416);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(668, 21);
+            this.textBox5.TabIndex = 8;
+            this.textBox5.Text = "C:\\Users\\voidm\\Downloads\\dll\\Dll_dev_64.dll";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(579, 81);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(40, 22);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Title";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(579, 56);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(43, 16);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Class";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(765, 450);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textBox5);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.textBox4);
@@ -133,6 +163,11 @@
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+
+        private System.Windows.Forms.TextBox textBox5;
 
         private System.Windows.Forms.Button button3;
 

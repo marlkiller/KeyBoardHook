@@ -1,114 +1,128 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{C46B42AE-A47B-4BB2-9F81-0D5A5FA21839}</ProjectGuid>
-        <OutputType>WinExe</OutputType>
-        <RootNamespace>KeyBoardHook</RootNamespace>
-        <AssemblyName>KeyBoardHook</AssemblyName>
-        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-        <FileAlignment>512</FileAlignment>
-        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <Deterministic>true</Deterministic>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <PlatformTarget>x64</PlatformTarget>
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
-        <DefineConstants>DEBUG;TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <Prefer32bit>false</Prefer32bit>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <PlatformTarget>x64</PlatformTarget>
-        <DebugType>pdbonly</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
-        <DefineConstants>TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <Prefer32bit>false</Prefer32bit>
-    </PropertyGroup>
-    <ItemGroup>
-<!--        <Reference Include="ClassLibrary1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">-->
-<!--          <HintPath>..\..\ClassLibrary1\ClassLibrary1\bin\Debug\ClassLibrary1.dll</HintPath>-->
-<!--        </Reference>-->
-<!--        <Reference Include="FastWin32, Version=2.1.19.1886, Culture=neutral, PublicKeyToken=c28cf53d24f32720">-->
-<!--          <HintPath>bin\Release\FastWin32.dll</HintPath>-->
-<!--        </Reference>-->
-        <Reference Include="System" />
-        <Reference Include="System.Core" />
-        <Reference Include="System.Xml.Linq" />
-        <Reference Include="System.Data.DataSetExtensions" />
-        <Reference Include="Microsoft.CSharp" />
-        <Reference Include="System.Data" />
-        <Reference Include="System.Deployment" />
-        <Reference Include="System.Drawing" />
-        <Reference Include="System.Net.Http" />
-        <Reference Include="System.Windows.Forms" />
-        <Reference Include="System.Xml" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="Common\Native\MemUtil.cs" />
-        <Compile Include="Form1.cs">
-            <SubType>Form</SubType>
-        </Compile>
-        <Compile Include="Form1.Designer.cs">
-            <DependentUpon>Form1.cs</DependentUpon>
-        </Compile>
-        <Compile Include="KeyLogger\Entity\ActiveWindowChangedEventArgs.cs" />
-        <Compile Include="KeyLogger\Entity\KeyboardHookStruct.cs" />
-        <Compile Include="KeyLogger\Entity\KeyLogEntry.cs" />
-        <Compile Include="KeyLogger\Entity\NormalText.cs" />
-        <Compile Include="KeyLogger\Entity\SpecialKey.cs" />
-        <Compile Include="KeyLogger\Entity\StandardKey.cs" />
-        <Compile Include="KeyLogger\Entity\WindowChanged.cs" />
-        <Compile Include="KeyLogger\Enums\HookType.cs" />
-        <Compile Include="KeyLogger\Enums\Keys.cs" />
-        <Compile Include="KeyLogger\Enums\MapVirtualKeyMapTypes.cs" />
-        <Compile Include="KeyLogger\Enums\SpecialKeyType.cs" />
-        <Compile Include="KeyLogger\Hooker\ActiveWindowHook.cs" />
-        <Compile Include="KeyLogger\Hooker\KeyboardHook.cs" />
-        <Compile Include="KeyLogger\Hooker\KeyProcessing.cs" />
-        <Compile Include="KeyLogger\Service\KeyLog.cs" />
-        <Compile Include="KeyLogger\Service\KeyLoggerService.cs" />
-        <Compile Include="KeyLogger\Service\MouseHookService.cs" />
-        <Compile Include="KeyLogger\StringDownEventArgs.cs" />
-        <Compile Include="Common\Native\NativeMethodsUser32.cs" />
-
-        <Compile Include="Program.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs" />
-        <EmbeddedResource Include="Form1.resx">
-          <DependentUpon>Form1.cs</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Properties\Resources.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-            <SubType>Designer</SubType>
-        </EmbeddedResource>
-        <Compile Include="Properties\Resources.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Resources.resx</DependentUpon>
-        </Compile>
-        <None Include="Properties\Settings.settings">
-            <Generator>SettingsSingleFileGenerator</Generator>
-            <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-        </None>
-        <Compile Include="Properties\Settings.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Settings.settings</DependentUpon>
-            <DesignTimeSharedInput>True</DesignTimeSharedInput>
-        </Compile>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="App.config" />
-    </ItemGroup>
-    
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C46B42AE-A47B-4BB2-9F81-0D5A5FA21839}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>KeyBoardHook</RootNamespace>
+    <AssemblyName>KeyBoardHook</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32bit>false</Prefer32bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32bit>false</Prefer32bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--        <Reference Include="ClassLibrary1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">-->
+    <!--          <HintPath>..\..\ClassLibrary1\ClassLibrary1\bin\Debug\ClassLibrary1.dll</HintPath>-->
+    <!--        </Reference>-->
+    <!--        <Reference Include="FastWin32, Version=2.1.19.1886, Culture=neutral, PublicKeyToken=c28cf53d24f32720">-->
+    <!--          <HintPath>bin\Release\FastWin32.dll</HintPath>-->
+    <!--        </Reference>-->
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\Native\MemUtil.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyLogger\Entity\ActiveWindowChangedEventArgs.cs" />
+    <Compile Include="KeyLogger\Entity\KeyboardHookStruct.cs" />
+    <Compile Include="KeyLogger\Entity\KeyLogEntry.cs" />
+    <Compile Include="KeyLogger\Entity\NormalText.cs" />
+    <Compile Include="KeyLogger\Entity\SpecialKey.cs" />
+    <Compile Include="KeyLogger\Entity\StandardKey.cs" />
+    <Compile Include="KeyLogger\Entity\WindowChanged.cs" />
+    <Compile Include="KeyLogger\Enums\HookType.cs" />
+    <Compile Include="KeyLogger\Enums\Keys.cs" />
+    <Compile Include="KeyLogger\Enums\MapVirtualKeyMapTypes.cs" />
+    <Compile Include="KeyLogger\Enums\SpecialKeyType.cs" />
+    <Compile Include="KeyLogger\Hooker\ActiveWindowHook.cs" />
+    <Compile Include="KeyLogger\Hooker\KeyboardHook.cs" />
+    <Compile Include="KeyLogger\Hooker\KeyProcessing.cs" />
+    <Compile Include="KeyLogger\Service\KeyLog.cs" />
+    <Compile Include="KeyLogger\Service\KeyLoggerService.cs" />
+    <Compile Include="KeyLogger\Service\MouseHookService.cs" />
+    <Compile Include="KeyLogger\StringDownEventArgs.cs" />
+    <Compile Include="Common\Native\NativeMethodsUser32.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

