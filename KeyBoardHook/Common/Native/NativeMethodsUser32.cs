@@ -122,8 +122,12 @@ namespace KeyBoardHook.Common.Native
         // 可用GetLastError获取更多的错误详细信息
         // void* buffer , [MarshalAs(UnmanagedType.AsAny)] object lpBuffer
         [DllImport("kernel32.dll")]
-        public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, [MarshalAs(UnmanagedType.AsAny)] object lpBuffer, int nsize, out IntPtr lpNumberOfBytesWritten);
+        // public static extern int WriteProcessMemory(IntPtr hwnd, IntPtr baseaddress, [MarshalAs(UnmanagedType.AsAny)] object lpBuffer, int nsize, out IntPtr lpNumberOfBytesWritten);
+        public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr  lpBuffer, int nSize, out IntPtr lpNumberOfBytesWritten);
 
+        
+        [DllImport("kernel32.dll")]
+        public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int nSize, out int lpNumberOfBytesRead);
         
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CloseHandle(IntPtr hObject);
